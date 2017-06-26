@@ -3,15 +3,15 @@ package org.supercsv.util;
 /**
  * Created by hans on 26-6-17.
  */
-public class Tuple<Ta, Tb> {
-    Ta first;
-    Tb second;
+public class Tuple<TA, TB> {
+    TA first;
+    TB second;
 
-    public Tuple(Ta a, Tb b){
+    public Tuple(TA a, TB b){
         first=a;
         second=b;
     }
 
-    public Ta GetFirst() { return first; }
-    public Tb GetSecond() { return second; }
+    public TA GetFirst() { return first; }
+    public TB GetSecond() { return second; }
 }
