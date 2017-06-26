@@ -203,5 +203,5 @@ public abstract class AbstractCsvReader implements ICsvReader {
 		Util.executeCellProcessors(processedColumns, getColumns(), processors, getLineNumber(), getRowNumber());
 		return processedColumns;
 	}
-	
+
 }

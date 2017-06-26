@@ -29,13 +29,13 @@ import org.supercsv.exception.SuperCsvException;
  * @author James Bassett
  */
 public interface ICsvListReader extends ICsvReader {
-	
+
 	/**
 	 * Reads a row of a CSV file and returns a List of Strings containing each column. If you are forced to use this
 	 * method instead of {@link #read(CellProcessor...)} because your CSV file has a variable number of columns, then
 	 * you can call the {@link #executeProcessors(CellProcessor...)} method after calling {@link #read()} to execute the
 	 * cell processors manually (after determining the number of columns read in and which cell processors to use).
-	 * 
+	 *
 	 * @return the List of columns, or null if EOF
 	 * @throws IOException
 	 *             if an I/O error occurred
@@ -44,19 +44,34 @@ public interface ICsvListReader extends ICsvReader {
 	 * @since 1.0
 	 */
 	List<String> read() throws IOException;
+
+	/**
+	 * Reads a row of a CSV file and returns a List of Strings containing each column. If you are forced to use this
+	 * method instead of {@link #read(CellProcessor...)} because your CSV file has a variable number of columns, then
+	 * you can call the {@link #executeProcessors(CellProcessor...)} method after calling {@link #read()} to execute the
+	 * cell processors manually (after determining the number of columns read in and which cell processors to use).
+	 *
+	 * @return the List of rows, which are encoded as List of columns, empty list if EOF
+	 * @throws IOException
+	 *             if an I/O error occurred
+	 * @throws SuperCsvException
+	 *             if there was a general exception while reading/processing
+	 * @since 1.0
+	 */
+	List<List<String>> readAll() throws IOException;
 	
 	/**
-	 * Reads a row of a CSV file and returns a List of Objects containing each column. The data can be further processed
+	 * Reads all rows of a CSV file and returns a List of List of Objects containing each column. The data can be further processed
 	 * by cell processors (each element in the processors array corresponds with a CSV column). A <tt>null</tt> entry in
 	 * the processors array indicates no further processing is required (the unprocessed String value will be added to
-	 * the List). Prior to version 2.0.0 this method returned a List of Strings.
+	 * the List).
 	 * 
 	 * @param processors
 	 *            an array of CellProcessors used to further process data before it is added to the List (each element
 	 *            in the processors array corresponds with a CSV column - the number of processors should match the
 	 *            number of columns). A <tt>null</tt> entry indicates no further processing is required (the unprocessed
 	 *            String value will be added to the List).
-	 * @return the List of columns, or null if EOF
+	 * @return a List of rows, with each a List of columns, empty list if EOF
 	 * @throws IOException
 	 *             if an I/O error occurred
 	 * @throws NullPointerException

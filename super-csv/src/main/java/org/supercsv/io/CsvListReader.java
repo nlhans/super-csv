@@ -72,6 +72,18 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 		
 		return null; // EOF
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<List<String>> readAll() throws IOException {
+		List<List<String>> allLines = new ArrayList<List<String>>();
+
+		while (readRow()) {
+			allLines.add(new ArrayList<String>(getColumns()));
+		}
+		return allLines;
+	}
 	
 	/**
 	 * {@inheritDoc}
@@ -88,7 +100,22 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 		
 		return null; // EOF
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<List<Object>> readAll(final CellProcessor... processors) throws IOException {
+		if( processors == null ) {
+			throw new NullPointerException("processors should not be null");
+		}
+		List<List<Object>> allLines = new ArrayList<List<Object>>();
+
+		while (readRow()) {
+			allLines.add(executeProcessors(processors));
+		}
+		return allLines;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

@@ -201,11 +201,41 @@ public class ReadingFeaturesTest {
 		Assert.assertEquals("John", line.get(0));
 		Assert.assertEquals("Connor", line.get(1));
 	}
-	
-	@Ignore
+
 	@Test
 	public void testReadAllLines() throws IOException {
-		throw new UnsupportedOperationException("'reader.readAll()' not implemented yet!");
+		String csv = "Sarah,Connor\r\nJohn,Connor\r\nKyle,Reese";
+		CsvListReader listReader = new CsvListReader(new StringReader(csv), STANDARD_PREFERENCE);
+
+		// Expected elements:
+		String[] line1Arr = new String[] { "Sarah","Connor"};
+		String[] line2Arr = new String[] { "John","Connor"};
+		String[] line3Arr = new String[] { "Kyle","Reese"};
+
+		// Read all lines
+		List<List<String>> lines = listReader.readAll();
+
+		Assert.assertEquals(3, lines.size());
+		Assert.assertArrayEquals(lines.get(0).toArray(), line1Arr);
+		Assert.assertArrayEquals(lines.get(1).toArray(), line2Arr);
+		Assert.assertArrayEquals(lines.get(2).toArray(), line3Arr);
+	}
+
+	@Test
+	public void testReadAllLinesWithProcessor() throws IOException {
+		String csv = "Connor,John,16\r\nSarah,Connor,18\r\n";
+		CellProcessor[] processors = { new NotNull(), new NotNull(), new ParseInt()  };
+		CsvListReader listReader = new CsvListReader(new StringReader(csv), STANDARD_PREFERENCE);
+
+		// Expected elements:
+		Object[] line1Arr = new Object[] { "Connor","John", 16 };
+		Object[] line2Arr = new Object[] { "Sarah","Connor", 18 };
+
+		List<List<Object>> lines = listReader.readAll(processors);
+
+		Assert.assertEquals(2, lines.size());
+		Assert.assertArrayEquals(lines.get(0).toArray(), line1Arr);
+		Assert.assertArrayEquals(lines.get(1).toArray(), line2Arr);
 	}
 	
 	@Test
