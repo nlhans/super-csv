@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.prefs.CsvPreference;
-import org.supercsv.util.Util;
 
 /**
  * CsvMapWriter writes Maps of Objects to a CSV file.
@@ -72,11 +71,63 @@ public class CsvMapWriter extends AbstractCsvWriter implements ICsvMapWriter {
 	}
 
 	/**
+	 * Returns a List of all of the values in the Map whose key matches an entry in the nameMapping array.
+	 *
+	 * @param map
+	 *            the map
+	 * @param nameMapping
+	 *            the keys of the Map values to add to the List
+	 * @return a List of all of the values in the Map whose key matches an entry in the nameMapping array
+	 * @throws NullPointerException
+	 *             if map or nameMapping is null
+	 */
+	public static List<Object> filterMapToList(final Map<String, ?> map, final String[] nameMapping) {
+		if( map == null ) {
+			throw new NullPointerException("map should not be null");
+		} else if( nameMapping == null ) {
+			throw new NullPointerException("nameMapping should not be null");
+		}
+
+		final List<Object> result = new ArrayList<Object>(nameMapping.length);
+		for( final String key : nameMapping ) {
+			result.add(map.get(key));
+		}
+		return result;
+	}
+
+	/**
+	 * Converts a Map to an array of objects, adding only those entries whose key is in the nameMapping array.
+	 *
+	 * @param values
+	 *            the Map of values to convert
+	 * @param nameMapping
+	 *            the keys to extract from the Map (elements in the target array will be added in this order)
+	 * @return the array of Objects
+	 * @throws NullPointerException
+	 *             if values or nameMapping is null
+	 */
+	public static Object[] filterMapToObjectArray(final Map<String, ?> values, final String[] nameMapping) {
+
+		if( values == null ) {
+			throw new NullPointerException("values should not be null");
+		} else if( nameMapping == null ) {
+			throw new NullPointerException("nameMapping should not be null");
+		}
+
+		final Object[] targetArray = new Object[nameMapping.length];
+		int i = 0;
+		for( final String name : nameMapping ) {
+			targetArray[i++] = values.get(name);
+		}
+		return targetArray;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public void write(final Map<String, ?> values, final String... nameMapping) throws IOException {
 		super.incrementRowAndLineNo();
-		super.writeRow(Util.filterMapToObjectArray(values, nameMapping));
+		super.writeRow(filterMapToObjectArray(values, nameMapping));
 	}
 	
 	/**
@@ -88,9 +139,8 @@ public class CsvMapWriter extends AbstractCsvWriter implements ICsvMapWriter {
 		super.incrementRowAndLineNo();
 		
 		// execute the processors for each column
-		Util.executeCellProcessors(processedColumns, Util.filterMapToList(values, nameMapping), processors,
-			getLineNumber(), getRowNumber());
-		
+		executeProcessors(processedColumns, filterMapToList(values, nameMapping), processors);
+
 		super.writeRow(processedColumns);
 	}
 }

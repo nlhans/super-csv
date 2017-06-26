@@ -82,7 +82,7 @@ public class MethodCache {
 	 * @throws SuperCsvReflectionException
 	 *             if the setter doesn't exist or is not visible
 	 */
-	public <T> Method getSetMethod(final Object object, final String fieldName, final Class<?> argumentType) {
+	public Method getSetMethod(final Object object, final String fieldName, final Class<?> argumentType) {
 		if( object == null ) {
 			throw new NullPointerException("object should not be null");
 		} else if( fieldName == null ) {

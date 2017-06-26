@@ -35,9 +35,9 @@ import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvBeanReader;
+import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.ICsvBeanReader;
 import org.supercsv.prefs.CsvPreference;
-import org.supercsv.util.Util;
 
 import com.carrotsearch.junitbenchmarks.annotation.BenchmarkMethodChart;
 
@@ -118,7 +118,7 @@ public class StandardCsvWritingBenchmarkTest extends AbstractCsvWritingBenchmark
 
 				// map data
 				Map<String, Object> map = new HashMap<String, Object>();
-				Util.filterListToMap(map, HEADER, list);
+				CsvMapReader.filterListToMap(map, HEADER, list);
 				MAP_DATA.add(map);
 			}
 

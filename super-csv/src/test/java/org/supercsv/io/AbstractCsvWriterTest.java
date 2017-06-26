@@ -16,12 +16,15 @@
 package org.supercsv.io;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.supercsv.SuperCsvTestUtils.HEADER;
 import static org.supercsv.SuperCsvTestUtils.HEADER_CSV;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -244,5 +247,48 @@ public class AbstractCsvWriterTest {
 	@Test(expected = NullPointerException.class)
 	public void testConstructorWithNullPreferences() {
 		new MockCsvWriter(writer, null);
+	}
+
+
+	/**
+	 * Tests the objectArrayToStringArray() method.
+	 */
+	@Test
+	public void testObjectArrayToStringArray() {
+		final Object[] input = new Object[] { 1, null, "three" };
+		final String[] output = AbstractCsvWriter.objectArrayToStringArray(input);
+		assertEquals(3, output.length);
+		assertEquals("1", output[0]);
+		assertNull(output[1]);
+		assertEquals("three", output[2]);
+	}
+
+	/**
+	 * Tests the objectArrayToStringArray() method with a null array.
+	 */
+	@Test
+	public void testObjectArrayToStringArrayWithNullArray() {
+		assertNull(AbstractCsvWriter.objectArrayToStringArray(null));
+	}
+
+	/**
+	 * Tests the objectListToStringArray() method.
+	 */
+	@Test
+	public void testObjectListToStringArray() {
+		final List<Object> input = Arrays.asList(new Object[] { 1, null, "three" });
+		final String[] output = AbstractCsvWriter.objectListToStringArray(input);
+		assertEquals(3, output.length);
+		assertEquals("1", output[0]);
+		assertNull(output[1]);
+		assertEquals("three", output[2]);
+	}
+
+	/**
+	 * Tests the objectListToStringArray() method with a null List.
+	 */
+	@Test
+	public void testObjectListToStringArrayWithNullList() {
+		assertNull(AbstractCsvWriter.objectListToStringArray(null));
 	}
 }

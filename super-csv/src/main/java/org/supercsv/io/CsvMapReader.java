@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.exception.SuperCsvException;
 import org.supercsv.prefs.CsvPreference;
-import org.supercsv.util.Util;
 
 /**
  * CsvMapReader reads each CSV row into a Map with the column name as the map key, and the column value as the map
@@ -64,7 +64,57 @@ public class CsvMapReader extends AbstractCsvReader implements ICsvMapReader {
 	public CsvMapReader(final ITokenizer tokenizer, final CsvPreference preferences) {
 		super(tokenizer, preferences);
 	}
-	
+
+	/**
+	 * Converts a List to a Map using the elements of the nameMapping array as the keys of the Map.
+	 *
+	 * @param destinationMap
+	 *            the destination Map (which is cleared before it's populated)
+	 * @param nameMapping
+	 *            the keys of the Map (corresponding with the elements in the sourceList). Cannot contain duplicates.
+	 * @param sourceList
+	 *            the List to convert
+	 * @param <T>
+	 *            the type of the values in the map
+	 * @throws NullPointerException
+	 *             if destinationMap, nameMapping or sourceList are null
+	 * @throws SuperCsvException
+	 *             if nameMapping and sourceList are not the same size
+	 */
+	public static <T> void filterListToMap(final Map<String, T> destinationMap, final String[] nameMapping,
+		final List<? extends T> sourceList) {
+		if( destinationMap == null ) {
+			throw new NullPointerException("destinationMap should not be null");
+		} else if( nameMapping == null ) {
+			throw new NullPointerException("nameMapping should not be null");
+		} else if( sourceList == null ) {
+			throw new NullPointerException("sourceList should not be null");
+		} else if( nameMapping.length != sourceList.size() ) {
+			throw new SuperCsvException(
+				String
+					.format(
+						"the nameMapping array and the sourceList should be the same size (nameMapping length = %d, sourceList size = %d)",
+						nameMapping.length, sourceList.size()));
+		}
+
+		destinationMap.clear();
+
+		for( int i = 0; i < nameMapping.length; i++ ) {
+			final String key = nameMapping[i];
+
+			if( key == null ) {
+				continue; // null's in the name mapping means skip column
+			}
+
+			// no duplicates allowed
+			if( destinationMap.containsKey(key) ) {
+				throw new SuperCsvException(String.format("duplicate nameMapping '%s' at index %d", key, i));
+			}
+
+			destinationMap.put(key, sourceList.get(i));
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -76,7 +126,7 @@ public class CsvMapReader extends AbstractCsvReader implements ICsvMapReader {
 		
 		if( readRow() ) {
 			final Map<String, String> destination = new HashMap<String, String>();
-			Util.filterListToMap(destination, nameMapping, getColumns());
+			filterListToMap(destination, nameMapping, getColumns());
 			return destination;
 		}
 		
@@ -96,12 +146,12 @@ public class CsvMapReader extends AbstractCsvReader implements ICsvMapReader {
 		
 		if( readRow() ) {
 			// process the columns
-			final List<Object> processedColumns = executeProcessors(new ArrayList<Object>(getColumns().size()),
+			final List<Object> processedColumns = super.executeProcessors(new ArrayList<Object>(getColumns().size()),
 				processors);
 			
 			// convert the List to a Map
 			final Map<String, Object> destination = new HashMap<String, Object>(processedColumns.size());
-			Util.filterListToMap((Map<String, Object>) destination, nameMapping, (List<Object>) processedColumns);
+			filterListToMap((Map<String, Object>) destination, nameMapping, (List<Object>) processedColumns);
 			return destination;
 		}
 		

@@ -271,7 +271,7 @@ public class CsvBeanReader extends AbstractCsvReader implements ICsvBeanReader {
 				processedColumns.clear();
 				processedColumns.addAll(getColumns());
 			} else {
-				executeProcessors(processedColumns, processors);
+				super.executeProcessors(processedColumns, processors);
 			}
 			
 			return populateBean(bean, nameMapping);
