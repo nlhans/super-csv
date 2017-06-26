@@ -133,7 +133,7 @@ public class CsvBeanWriter extends AbstractCsvWriter implements ICsvBeanWriter {
 		extractBeanValues(source, nameMapping);
 		
 		// execute the processors for each column
-		Util.executeCellProcessors(processedColumns, beanValues, processors, getLineNumber(), getRowNumber());
+		executeProcessors(processedColumns, beanValues, processors);
 		
 		// write the list
 		super.writeRow(processedColumns);

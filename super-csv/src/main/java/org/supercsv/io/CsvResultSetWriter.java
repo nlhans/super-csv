@@ -117,7 +117,7 @@ public class CsvResultSetWriter extends AbstractCsvWriter implements ICsvResultS
 			for( int columnIndex = 1; columnIndex <= numberOfColumns; columnIndex++ ) {
 				objects.add(resultSet.getObject(columnIndex));
 			}
-			Util.executeCellProcessors(processedColumns, objects, writeProcessors, getLineNumber(), getRowNumber());
+			executeProcessors(processedColumns, objects, writeProcessors);
 			super.writeRow(processedColumns);
 		}
 	}

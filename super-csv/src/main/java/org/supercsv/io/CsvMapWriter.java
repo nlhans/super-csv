@@ -88,9 +88,8 @@ public class CsvMapWriter extends AbstractCsvWriter implements ICsvMapWriter {
 		super.incrementRowAndLineNo();
 		
 		// execute the processors for each column
-		Util.executeCellProcessors(processedColumns, Util.filterMapToList(values, nameMapping), processors,
-			getLineNumber(), getRowNumber());
-		
+		executeProcessors(processedColumns, Util.filterMapToList(values, nameMapping), processors);
+
 		super.writeRow(processedColumns);
 	}
 }

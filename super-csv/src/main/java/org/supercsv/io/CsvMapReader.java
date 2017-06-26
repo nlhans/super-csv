@@ -96,7 +96,7 @@ public class CsvMapReader extends AbstractCsvReader implements ICsvMapReader {
 		
 		if( readRow() ) {
 			// process the columns
-			final List<Object> processedColumns = executeProcessors(new ArrayList<Object>(getColumns().size()),
+			final List<Object> processedColumns = super.executeProcessors(new ArrayList<Object>(getColumns().size()),
 				processors);
 			
 			// convert the List to a Map

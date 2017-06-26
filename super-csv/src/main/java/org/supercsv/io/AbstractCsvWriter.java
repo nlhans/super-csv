@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
+import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.encoder.CsvEncoder;
 import org.supercsv.prefs.CsvPreference;
 import org.supercsv.util.CsvContext;
@@ -227,6 +228,12 @@ public abstract class AbstractCsvWriter implements ICsvWriter {
 		incrementRowAndLineNo();
 		
 		writeRow(header);
+	}
+
+
+	protected void executeProcessors(final List<Object> processedColumns, List<?> columns, CellProcessor[] processors) {
+		Util.executeCellProcessors(processedColumns, columns, processors,
+				getLineNumber(), getRowNumber());
 	}
 	
 }

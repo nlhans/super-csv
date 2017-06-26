@@ -58,7 +58,7 @@ public class CsvListWriter extends AbstractCsvWriter implements ICsvListWriter {
 		super.incrementRowAndLineNo();
 		
 		// execute the processors for each column
-		Util.executeCellProcessors(processedColumns, columns, processors, getLineNumber(), getRowNumber());
+		executeProcessors(processedColumns, columns, processors);
 		
 		super.writeRow(processedColumns);
 	}
