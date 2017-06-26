@@ -192,5 +192,16 @@ public final class CsvContext implements Serializable {
 		}
 		return true;
 	}
-	
+
+	public void nextLine() {
+		lineNumber++;
+	}
+
+    public void nextRow() {
+	    rowNumber++;
+    }
+
+    public void nextColumn() {
+	    columnNumber++;
+    }
 }

@@ -38,15 +38,8 @@ public abstract class AbstractCsvWriter implements ICsvWriter {
 	private final CsvPreference preference;
 	
 	private final CsvEncoder encoder;
-	
-	// the line number being written / just written
-	private int lineNumber = 0;
-	
-	// the row being written / just written
-	private int rowNumber = 0;
-	
-	// the column being written / just written
-	private int columnNumber = 0;
+
+	private CsvContext csvContext = new CsvContext(0, 0, 0);
 	
 	/**
 	 * Constructs a new <tt>AbstractCsvWriter</tt> with the supplied writer and preferences.
@@ -102,29 +95,31 @@ public abstract class AbstractCsvWriter implements ICsvWriter {
 	}
 	
 	/**
-	 * In order to maintain the current row and line numbers, this method <strong>must</strong> be called at the very
-	 * beginning of every write method implemented in concrete CSV writers. This will allow the correct row/line numbers
-	 * to be used in any exceptions thrown before writing occurs (e.g. during CellProcessor execution), and means that
-	 * {@link #getLineNumber()} and {@link #getRowNumber()} can be called after writing to return the line/row just
-	 * written.
+	 * In order to maintain the current row, line number and column numbers, this method <strong>must</strong>
+	 * be called at the very beginning of every write method implemented in concrete CSV writers.
+	 * This will allow the correct row/line numbers to be used in any exceptions thrown before writing occurs
+	 * (e.g. during CellProcessor execution), means that {@link #getLineNumber()} and {@link #getRowNumber()}
+	 * can be called after writing to return the line/row just written. Method call also resets column number to 1
+	 * before writing a new row (columns indices are 1-based).
 	 */
 	protected void incrementRowAndLineNo() {
-		lineNumber++;
-		rowNumber++;
+		csvContext.nextLine();
+		csvContext.nextRow();
+		csvContext.setColumnNumber(1);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	public int getLineNumber() {
-		return lineNumber;
+		return csvContext.getLineNumber();
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	public int getRowNumber() {
-		return rowNumber;
+		return csvContext.getRowNumber();
 	}
 	
 	/**
@@ -174,29 +169,30 @@ public abstract class AbstractCsvWriter implements ICsvWriter {
 	protected void writeRow(final String... columns) throws IOException {
 		
 		if( columns == null ) {
-			throw new NullPointerException(String.format("columns to write should not be null on line %d", lineNumber));
+			throw new NullPointerException(
+					String.format("columns to write should not be null on line %d", csvContext.getLineNumber()));
 		} else if( columns.length == 0 ) {
 			throw new IllegalArgumentException(String.format("columns to write should not be empty on line %d",
-				lineNumber));
+				csvContext.getLineNumber()));
 		}
 		
 		StringBuilder builder = new StringBuilder();
+
 		for( int i = 0; i < columns.length; i++ ) {
-			
-			columnNumber = i + 1; // column no used by CsvEncoder
-			
+
+			csvContext.nextColumn();
+
 			if( i > 0 ) {
 				builder.append((char) preference.getDelimiterChar()); // delimiter
 			}
 			
 			final String csvElement = columns[i];
+
 			if( csvElement != null ) {
-				final CsvContext context = new CsvContext(lineNumber, rowNumber, columnNumber);
-				final String escapedCsv = encoder.encode(csvElement, context, preference);
+				final String escapedCsv = encoder.encode(csvElement, csvContext, preference);
 				builder.append(escapedCsv);
-				lineNumber = context.getLineNumber(); // line number can increment when encoding multi-line columns
 			}
-			
+
 		}
 		
 		builder.append(preference.getEndOfLineSymbols()); // EOL
@@ -208,10 +204,11 @@ public abstract class AbstractCsvWriter implements ICsvWriter {
 	 */
 	public void writeComment(final String comment) throws IOException {
 		
-		lineNumber++; // we're not catering for embedded newlines (must be a single-line comment)
+		csvContext.nextLine();
 		
 		if( comment == null ) {
-			throw new NullPointerException(String.format("comment to write should not be null on line %d", lineNumber));
+			throw new NullPointerException(
+					String.format("comment to write should not be null on line %d", csvContext.getLineNumber()));
 		}
 		
 		writer.write(comment + preference.getEndOfLineSymbols());
