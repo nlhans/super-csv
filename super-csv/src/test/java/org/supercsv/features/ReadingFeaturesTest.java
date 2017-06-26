@@ -30,6 +30,7 @@ import org.supercsv.io.CsvListReader;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
 import org.supercsv.prefs.CsvPreference.Builder;
+import org.supercsv.util.Tuple;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -237,7 +238,59 @@ public class ReadingFeaturesTest {
 		Assert.assertArrayEquals(lines.get(0).toArray(), line1Arr);
 		Assert.assertArrayEquals(lines.get(1).toArray(), line2Arr);
 	}
-	
+
+	@Test
+	public void testTryRead() throws IOException {
+		String csv = "Connor,John,16\r\nSarah,Connor,18\r\n";
+		CsvListReader listReader = new CsvListReader(new StringReader(csv), STANDARD_PREFERENCE);
+
+		// Expected elements:
+		String[] line1Arr = new String[] { "Connor","John", "16" };
+		String[] line2Arr = new String[] { "Sarah","Connor", "18" };
+
+		Tuple<Boolean, List<String>> line1 = listReader.tryRead();
+
+		Assert.assertTrue(line1.GetFirst());
+		Assert.assertArrayEquals(line1.GetSecond().toArray(), line1Arr);
+
+		Tuple<Boolean, List<String>> line2 = listReader.tryRead();
+
+		Assert.assertTrue(line2.GetFirst());
+		Assert.assertArrayEquals(line2.GetSecond().toArray(), line2Arr);
+
+		Tuple<Boolean, List<String>> line3 = listReader.tryRead();
+
+		Assert.assertFalse(line3.GetFirst());
+		Assert.assertNull(line3.GetSecond());
+
+	}
+
+	@Test
+	public void testTryReadWithProcessor() throws IOException {
+		String csv = "Connor,John,16\r\nSarah,Connor,abc\r\n";
+		CellProcessor[] processors = { new NotNull(), new NotNull(), new ParseInt()  };
+		CsvListReader listReader = new CsvListReader(new StringReader(csv), STANDARD_PREFERENCE);
+
+		// Expected elements:
+		Object[] line1Arr = new Object[] { "Connor","John", 16 };
+
+		Tuple<Boolean, List<Object>> line1 = listReader.tryRead(processors);
+
+		Assert.assertTrue(line1.GetFirst());
+		Assert.assertArrayEquals(line1.GetSecond().toArray(), line1Arr);
+
+		Tuple<Boolean, List<Object>> line2 = listReader.tryRead(processors);
+
+		Assert.assertFalse(line2.GetFirst());
+		Assert.assertNull(line2.GetSecond());
+
+		Tuple<Boolean, List<Object>> line3 = listReader.tryRead(processors);
+
+		Assert.assertFalse(line3.GetFirst());
+		Assert.assertNull(line3.GetSecond());
+
+	}
+
 	@Test
 	public void testSkipCommentLines() throws IOException {
 		String csv = "<!--Sarah,Connor-->\r\nJohn,Connor\r\n<!--Kyle,Reese-->";

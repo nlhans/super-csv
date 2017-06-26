@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.prefs.CsvPreference;
+import org.supercsv.util.Tuple;
 
 /**
  * CsvListReader is a simple reader that reads a row from a CSV file into a <tt>List</tt> of Strings.
@@ -114,6 +115,38 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 			allLines.add(executeProcessors(processors));
 		}
 		return allLines;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Tuple<Boolean, List<String>> tryRead()
+	{
+		try {
+			List<String> data = read();
+			return new Tuple(data != null, data);
+		}
+		catch (Exception ex)
+		{
+			// ignore all exceptions; just tell user that the read was not succesful
+			return new Tuple(false, null);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Tuple<Boolean, List<Object>> tryRead(final CellProcessor... processors)
+	{
+		try {
+			List<Object> data = read(processors);
+			return new Tuple(data != null, data);
+		}
+		catch (Exception ex)
+		{
+			// ignore all exceptions; just tell user that the read was not succesful
+			return new Tuple(false, null);
+		}
 	}
 
 	/**
