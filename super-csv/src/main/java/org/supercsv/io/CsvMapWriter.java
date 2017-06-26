@@ -81,7 +81,7 @@ public class CsvMapWriter extends AbstractCsvWriter implements ICsvMapWriter {
 	 * @throws NullPointerException
 	 *             if map or nameMapping is null
 	 */
-	public static List<Object> filterMapToList(final Map<String, ?> map, final String[] nameMapping) {
+	public List<Object> filterMapToList(final Map<String, ?> map, final String[] nameMapping) {
 		if( map == null ) {
 			throw new NullPointerException("map should not be null");
 		} else if( nameMapping == null ) {
@@ -106,7 +106,7 @@ public class CsvMapWriter extends AbstractCsvWriter implements ICsvMapWriter {
 	 * @throws NullPointerException
 	 *             if values or nameMapping is null
 	 */
-	public static Object[] filterMapToObjectArray(final Map<String, ?> values, final String[] nameMapping) {
+	public Object[] filterMapToObjectArray(final Map<String, ?> values, final String[] nameMapping) {
 
 		if( values == null ) {
 			throw new NullPointerException("values should not be null");

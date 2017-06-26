@@ -188,7 +188,7 @@ public class CsvMapWriterTest {
 	 */
 	@Test
 	public void testFilterMapToObjectArray() {
-		final Object[] objectArray = CsvMapWriter.filterMapToObjectArray(MAP, NAME_MAPPING);
+		final Object[] objectArray = mapWriter.filterMapToObjectArray(MAP, NAME_MAPPING);
 		assertTrue(objectArray.length == 3);
 		assertEquals("Ezio", objectArray[0]);
 		assertNull(objectArray[1]);
@@ -200,7 +200,7 @@ public class CsvMapWriterTest {
 	 */
 	@Test(expected = NullPointerException.class)
 	public void testFilterMapToObjectArrayWithNullValues() {
-		CsvMapWriter.filterMapToObjectArray(null, NAME_MAPPING);
+		mapWriter.filterMapToObjectArray(null, NAME_MAPPING);
 	}
 
 	/**
@@ -208,7 +208,7 @@ public class CsvMapWriterTest {
 	 */
 	@Test(expected = NullPointerException.class)
 	public void testFilterMapToObjectArrayWithNullNameMapping() {
-		CsvMapWriter.filterMapToObjectArray(MAP, null);
+		mapWriter.filterMapToObjectArray(MAP, null);
 	}
 
 	/**
@@ -216,7 +216,7 @@ public class CsvMapWriterTest {
 	 */
 	@Test
 	public void testFilterMapToList() {
-		List<Object> list = CsvMapWriter.filterMapToList(MAP, NAME_MAPPING);
+		List<Object> list = mapWriter.filterMapToList(MAP, NAME_MAPPING);
 		assertTrue(list.size() == 3);
 		assertEquals("Ezio", list.get(0));
 		assertNull(list.get(1));
@@ -228,7 +228,7 @@ public class CsvMapWriterTest {
 	 */
 	@Test(expected = NullPointerException.class)
 	public void testFilterMapToListWithNullMap() {
-		CsvMapWriter.filterMapToList(null, NAME_MAPPING);
+		mapWriter.filterMapToList(null, NAME_MAPPING);
 	}
 
 	/**
@@ -236,7 +236,7 @@ public class CsvMapWriterTest {
 	 */
 	@Test(expected = NullPointerException.class)
 	public void testFilterMapToListWithNullNameMapping() {
-		CsvMapWriter.filterMapToList(MAP, null);
+		mapWriter.filterMapToList(MAP, null);
 	}
 
 }
