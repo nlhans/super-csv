@@ -28,10 +28,10 @@ import org.dozer.loader.api.BeanMappingBuilder;
 import org.dozer.loader.api.FieldsMappingOptions;
 import org.dozer.loader.api.TypeMappingBuilder;
 import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.io.AbstractCsvProcessor;
 import org.supercsv.io.AbstractCsvWriter;
 import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
-import org.supercsv.util.Util;
 
 /**
  * CsvDozerBeanWriter is a powerful replacement for {@link CsvBeanWriter} that uses Dozer to map from a bean to CSV.
@@ -132,7 +132,7 @@ public class CsvDozerBeanWriter extends AbstractCsvWriter implements ICsvDozerBe
 		dozerBeanMapper.map(source, beanData);
 		
 		// execute the cell processors
-		Util.executeCellProcessors(processedColumns, beanData.getColumns(), processors, getLineNumber(), getRowNumber());
+		executeCellProcessors(processedColumns, beanData.getColumns(), processors, getLineNumber(), getRowNumber());
 		
 		// write the list
 		super.writeRow(processedColumns);

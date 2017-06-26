@@ -15,9 +15,7 @@
  */
 package org.supercsv.io;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.supercsv.SuperCsvTestUtils.CSV_FILE;
 import static org.supercsv.SuperCsvTestUtils.CUSTOMERS;
 import static org.supercsv.SuperCsvTestUtils.HEADER;
@@ -28,11 +26,15 @@ import static org.supercsv.SuperCsvTestUtils.STRING_CUSTOMERS;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.supercsv.exception.SuperCsvException;
 import org.supercsv.prefs.CsvPreference;
 
 /**
@@ -43,6 +45,10 @@ import org.supercsv.prefs.CsvPreference;
 public class CsvMapReaderTest {
 	
 	private static final CsvPreference PREFS = CsvPreference.STANDARD_PREFERENCE;
+
+	private static final String[] NAME_MAPPING = new String[] { "name", null, "city" };
+
+	private static final List<String> LIST = Arrays.asList("Ezio", "25", "Venice");
 	
 	private Reader reader;
 	
@@ -269,5 +275,57 @@ public class CsvMapReaderTest {
 	public void testTokenizerConstructorWithNullPreferences() {
 		new CsvMapReader(new Tokenizer(reader, PREFS), null);
 	}
-	
+
+	/**
+	 * Tests the filterListToMap() method.
+	 */
+	@Test
+	public void testFilterListToMap() {
+		final Map<String, String> map = new HashMap<String, String>();
+		CsvMapReader.filterListToMap(map, NAME_MAPPING, LIST);
+		assertTrue(map.size() == 2);
+		assertEquals("Ezio", map.get("name"));
+		assertEquals("Venice", map.get("city"));
+	}
+
+	/**
+	 * Tests the filterListToMap() method with a null destination map (should throw an exception).
+	 */
+	@Test(expected = NullPointerException.class)
+	public void testFilterListToMapWithNullDestMap() {
+		CsvMapReader.filterListToMap(null, NAME_MAPPING, LIST);
+	}
+
+	/**
+	 * Tests the filterListToMap() method with a null name mapping array (should throw an exception).
+	 */
+	@Test(expected = NullPointerException.class)
+	public void testFilterListToMapWithNullNameMapping() {
+		CsvMapReader.filterListToMap(new HashMap<String, String>(), null, LIST);
+	}
+
+	/**
+	 * Tests the filterListToMap() method with a null source list (should throw an exception).
+	 */
+	@Test(expected = NullPointerException.class)
+	public void testFilterListToMapWithNullSourceList() {
+		CsvMapReader.filterListToMap(new HashMap<String, String>(), NAME_MAPPING, null);
+	}
+
+	/**
+	 * Tests the filterListToMap() method with a name mapping array with too few elements (should throw an exception).
+	 */
+	@Test(expected = SuperCsvException.class)
+	public void testFilterListToMapWithSizeMismatch() {
+		CsvMapReader.filterListToMap(new HashMap<String, String>(), new String[] { "notEnoughColumns" }, LIST);
+	}
+
+	/**
+	 * Tests the filterListToMap() method with a name mapping array with duplicate elements (should throw an exception).
+	 */
+	@Test(expected = SuperCsvException.class)
+	public void testFilterListToMapWithDuplicateNameMapping() {
+		CsvMapReader.filterListToMap(new HashMap<String, String>(), new String[] { "name", "name", "city" }, LIST);
+	}
+
 }

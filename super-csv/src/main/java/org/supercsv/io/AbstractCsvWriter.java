@@ -24,7 +24,6 @@ import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.encoder.CsvEncoder;
 import org.supercsv.prefs.CsvPreference;
 import org.supercsv.util.CsvContext;
-import org.supercsv.util.Util;
 
 /**
  * Defines the standard behaviour of a CSV writer.
@@ -32,7 +31,7 @@ import org.supercsv.util.Util;
  * @author Kasper B. Graversen
  * @author James Bassett
  */
-public abstract class AbstractCsvWriter implements ICsvWriter {
+public abstract class AbstractCsvWriter extends AbstractCsvProcessor implements ICsvWriter {
 	
 	private final Writer writer;
 	
@@ -87,7 +86,47 @@ public abstract class AbstractCsvWriter implements ICsvWriter {
 		this.preference = preference;
 		this.encoder = preference.getEncoder();
 	}
-	
+
+	/**
+	 * Converts an Object array to a String array (null-safe), by calling toString() on each element.
+	 *
+	 * @param objectArray
+	 *            the Object array
+	 * @return the String array, or null if objectArray is null
+	 */
+	public static String[] objectArrayToStringArray(final Object[] objectArray) {
+		if( objectArray == null ) {
+			return null;
+		}
+
+		final String[] stringArray = new String[objectArray.length];
+		for( int i = 0; i < objectArray.length; i++ ) {
+			stringArray[i] = objectArray[i] != null ? objectArray[i].toString() : null;
+		}
+
+		return stringArray;
+	}
+
+	/**
+	 * Converts an {@code List<Object>} to a String array (null-safe), by calling {@code toString()} on each element.
+	 *
+	 * @param objectList
+	 *            the List
+	 * @return the String array, or null if objectList is null
+	 */
+	public static String[] objectListToStringArray(final List<?> objectList) {
+		if( objectList == null ) {
+			return null;
+		}
+
+		final String[] stringArray = new String[objectList.size()];
+		for( int i = 0; i < objectList.size(); i++ ) {
+			stringArray[i] = objectList.get(i) != null ? objectList.get(i).toString() : null;
+		}
+
+		return stringArray;
+	}
+
 	/**
 	 * Closes the underlying writer, flushing it first.
 	 */
@@ -141,7 +180,7 @@ public abstract class AbstractCsvWriter implements ICsvWriter {
 	 *             if columns is null
 	 */
 	protected void writeRow(final List<?> columns) throws IOException {
-		writeRow(Util.objectListToStringArray(columns));
+		writeRow(objectListToStringArray(columns));
 	}
 	
 	/**
@@ -157,7 +196,7 @@ public abstract class AbstractCsvWriter implements ICsvWriter {
 	 *             if columns is null
 	 */
 	protected void writeRow(final Object... columns) throws IOException {
-		writeRow(Util.objectArrayToStringArray(columns));
+		writeRow(objectArrayToStringArray(columns));
 	}
 	
 	/**
@@ -232,8 +271,7 @@ public abstract class AbstractCsvWriter implements ICsvWriter {
 
 
 	protected void executeProcessors(final List<Object> processedColumns, List<?> columns, CellProcessor[] processors) {
-		Util.executeCellProcessors(processedColumns, columns, processors,
-				getLineNumber(), getRowNumber());
+		executeCellProcessors(processedColumns, columns, processors, getLineNumber(), getRowNumber());
 	}
 	
 }

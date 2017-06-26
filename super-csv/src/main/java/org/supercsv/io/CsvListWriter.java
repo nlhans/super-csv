@@ -15,14 +15,13 @@
  */
 package org.supercsv.io;
 
+import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.prefs.CsvPreference;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.supercsv.cellprocessor.ift.CellProcessor;
-import org.supercsv.prefs.CsvPreference;
-import org.supercsv.util.Util;
 
 /**
  * CsvListWriter is a simple writer capable of writing arrays and Lists to a CSV file.

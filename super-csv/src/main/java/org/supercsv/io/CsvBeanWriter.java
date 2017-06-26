@@ -15,17 +15,16 @@
  */
 package org.supercsv.io;
 
+import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.exception.SuperCsvReflectionException;
+import org.supercsv.prefs.CsvPreference;
+import org.supercsv.util.MethodCache;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.supercsv.cellprocessor.ift.CellProcessor;
-import org.supercsv.exception.SuperCsvReflectionException;
-import org.supercsv.prefs.CsvPreference;
-import org.supercsv.util.MethodCache;
-import org.supercsv.util.Util;
 
 /**
  * CsvBeanWriter writes a CSV file by mapping each field on the bean to a column in the CSV file (using the supplied

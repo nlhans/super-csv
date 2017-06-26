@@ -24,7 +24,6 @@ import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.exception.SuperCsvConstraintViolationException;
 import org.supercsv.exception.SuperCsvException;
 import org.supercsv.prefs.CsvPreference;
-import org.supercsv.util.Util;
 
 /**
  * Defines the standard behaviour of a CSV reader.
@@ -32,7 +31,7 @@ import org.supercsv.util.Util;
  * @author Kasper B. Graversen
  * @author James Bassett
  */
-public abstract class AbstractCsvReader implements ICsvReader {
+public abstract class AbstractCsvReader extends AbstractCsvProcessor implements ICsvReader {
 	
 	private final ITokenizer tokenizer;
 	
@@ -200,7 +199,7 @@ public abstract class AbstractCsvReader implements ICsvReader {
 	 *             if the wrong number of processors are supplied, or CellProcessor execution failed
 	 */
 	protected List<Object> executeProcessors(final List<Object> processedColumns, final CellProcessor[] processors) {
-		Util.executeCellProcessors(processedColumns, getColumns(), processors, getLineNumber(), getRowNumber());
+		executeCellProcessors(processedColumns, getColumns(), processors, getLineNumber(), getRowNumber());
 		return processedColumns;
 	}
 

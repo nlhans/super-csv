@@ -16,6 +16,9 @@
 
 package org.supercsv.io;
 
+import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.prefs.CsvPreference;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.sql.ResultSet;
@@ -23,10 +26,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.supercsv.cellprocessor.ift.CellProcessor;
-import org.supercsv.prefs.CsvPreference;
-import org.supercsv.util.Util;
 
 /**
  * CsvResultSetWriter writes a CSV file by mapping each column of the {@code ResultSet} to a column in CSV file using
