@@ -148,29 +148,8 @@ public class Tokenizer extends AbstractTokenizer {
 					
 					charIndex = 0;
 
-					if (maxLinesPerRow > 0 && getLineNumber() - quoteScopeStartingLine + 1 >= maxLinesPerRow) {
-						/*
-						 * The quoted section that is being parsed spans too many lines, so to avoid excessive memory
-						 * usage parsing something that is probably human error anyways, throw an exception. If each
-						 * row is suppose to be a single line and this has been exceeded, throw a more descriptive
-						 * exception
-						 */
-						String msg = maxLinesPerRow == 1 ?
-								String.format("unexpected end of line while reading quoted column on line %d",
-											  getLineNumber()) :
-								String.format("max number of lines to read exceeded while reading quoted column" +
-											  " beginning on line %d and ending on line %d",
-											  quoteScopeStartingLine, getLineNumber());
-						throw new SuperCsvException(msg);
-					}
-					else if( (line = readLine()) == null ) {
-						throw new SuperCsvException(
-							String
-								.format(
-									"unexpected end of file while reading quoted column beginning on line %d and ending on line %d",
-									quoteScopeStartingLine, getLineNumber()));
-					}
-					
+					line = ExceptionsInColumnInput(quoteScopeStartingLine); //handel all problems in the reading columns
+
 					currentRow.append(line); // update untokenized CSV row
 					
 				    if (line.length() == 0){
@@ -303,7 +282,36 @@ public class Tokenizer extends AbstractTokenizer {
 			charIndex++; // read next char of the line
 		}
 	}
-/**
+
+	//ExceptionsInColumnInput does handel all problems in the reading columns
+	private String ExceptionsInColumnInput(int quoteScopeStartingLine) throws IOException {
+		String line;
+		if (maxLinesPerRow > 0 && getLineNumber() - quoteScopeStartingLine + 1 >= maxLinesPerRow) {
+            /*
+             * The quoted section that is being parsed spans too many lines, so to avoid excessive memory
+             * usage parsing something that is probably human error anyways, throw an exception. If each
+             * row is suppose to be a single line and this has been exceeded, throw a more descriptive
+             * exception
+             */
+            String msg = maxLinesPerRow == 1 ?
+                    String.format("unexpected end of line while reading quoted column on line %d",
+                                  getLineNumber()) :
+                    String.format("max number of lines to read exceeded while reading quoted column" +
+                                  " beginning on line %d and ending on line %d",
+                                  quoteScopeStartingLine, getLineNumber());
+            throw new SuperCsvException(msg);
+        }
+        else if( (line = readLine()) == null ) {
+            throw new SuperCsvException(
+                String
+                    .format(
+                        "unexpected end of file while reading quoted column beginning on line %d and ending on line %d",
+                        quoteScopeStartingLine, getLineNumber()));
+        }
+		return line;
+	}
+
+	/**
  * Adds the currentColumn to columns list managing the case with currentColumn.length() == 0
  * It was introduced to manage the emptyColumnParsing.
  * 
