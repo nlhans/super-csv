@@ -28,7 +28,7 @@ import java.util.List;
  * @author Kasper B. Graversen
  * @author James Bassett
  */
-public final class CsvContext implements Serializable {
+public final class CsvContext<T> implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -42,7 +42,7 @@ public final class CsvContext implements Serializable {
 	private int columnNumber;
 	
 	/** the row just read in, or to be written */
-	private List<Object> rowSource;
+	private List<T> rowSource;
 	
 	/**
 	 * Constructs a new <tt>CsvContext</tt>.
@@ -72,7 +72,7 @@ public final class CsvContext implements Serializable {
 			// Shallow clone is OK here. A deep clone implementation would be tricky
 			// because the declared type of the items in the array is "Object" which does not 
 			// have an exposed copy constructor or clone method.
-			this.rowSource = new ArrayList<Object>(c.rowSource);
+			this.rowSource = new ArrayList<T>(c.rowSource);
 		}
 	}
 	
@@ -124,7 +124,7 @@ public final class CsvContext implements Serializable {
 	/**
 	 * @return the rowSource
 	 */
-	public List<Object> getRowSource() {
+	public List<T> getRowSource() {
 		return rowSource;
 	}
 	
@@ -132,7 +132,7 @@ public final class CsvContext implements Serializable {
 	 * @param rowSource
 	 *            the rowSource to set
 	 */
-	public void setRowSource(List<Object> rowSource) {
+	public void setRowSource(List<T> rowSource) {
 		this.rowSource = rowSource;
 	}
 	

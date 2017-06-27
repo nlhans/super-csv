@@ -24,6 +24,7 @@ import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.exception.SuperCsvConstraintViolationException;
 import org.supercsv.exception.SuperCsvException;
 import org.supercsv.prefs.CsvPreference;
+import org.supercsv.util.CsvContext;
 
 /**
  * Defines the standard behaviour of a CSV reader.
@@ -37,11 +38,7 @@ public abstract class AbstractCsvReader extends AbstractCsvProcessor implements 
 	
 	private final CsvPreference preferences;
 	
-	// the current tokenized columns
-	private final List<String> columns = new ArrayList<String>();
-	
-	// the number of CSV records read
-	private int rowNumber = 0;
+	protected CsvContext<String> context = new CsvContext(0,0,0);
 	
 	/**
 	 * Constructs a new <tt>AbstractCsvReader</tt>, using the default {@link Tokenizer}.
@@ -98,7 +95,7 @@ public abstract class AbstractCsvReader extends AbstractCsvProcessor implements 
 	 * {@inheritDoc}
 	 */
 	public String get(final int n) {
-		return columns.get(n - 1); // column numbers start at 1
+		return context.getRowSource().get(n - 1); // column numbers start at 1
 	}
 	
 	/**
@@ -113,7 +110,7 @@ public abstract class AbstractCsvReader extends AbstractCsvProcessor implements 
 		}
 		
 		if( readRow() ) {
-			return columns.toArray(new String[columns.size()]);
+			return context.getRowSource().toArray(new String[length()]);
 		}
 		
 		return null;
@@ -137,13 +134,19 @@ public abstract class AbstractCsvReader extends AbstractCsvProcessor implements 
 	 * {@inheritDoc}
 	 */
 	public int getRowNumber() {
-		return rowNumber;
+		return context.getRowNumber();
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	public int length() {
+		List<String> columns = context.getRowSource();
+
+		if (columns == null) {
+			return 0;
+		}
+
 		return columns.size();
 	}
 	
@@ -153,7 +156,7 @@ public abstract class AbstractCsvReader extends AbstractCsvProcessor implements 
 	 * @return the tokenized columns
 	 */
 	protected List<String> getColumns() {
-		return columns;
+		return context.getRowSource();
 	}
 	
 	/**
@@ -175,10 +178,14 @@ public abstract class AbstractCsvReader extends AbstractCsvProcessor implements 
 	 *             on errors in parsing the input
 	 */
 	protected boolean readRow() throws IOException {
+		List<String> columns = new ArrayList<String>();
+
 		if( tokenizer.readColumns(columns) ) {
-			rowNumber++;
+			context.nextRow();
+			context.setRowSource(columns);
 			return true;
 		}
+		context.setRowSource(null);
 		return false;
 	}
 	
