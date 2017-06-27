@@ -40,6 +40,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -240,55 +241,91 @@ public class ReadingFeaturesTest {
 	}
 
 	@Test
-	public void testTryRead() throws IOException {
-		String csv = "Connor,John,16\r\nSarah,Connor,18\r\n";
+	public void testTryRead() {
+		String csv = "Connor,John,16\r\nSarah,Connor,18\r\n\r\n";
 		CsvListReader listReader = new CsvListReader(new StringReader(csv), STANDARD_PREFERENCE);
 
 		// Expected elements:
 		String[] line1Arr = new String[] { "Connor","John", "16" };
 		String[] line2Arr = new String[] { "Sarah","Connor", "18" };
 
-		Tuple<Boolean, List<String>> line1 = listReader.tryRead();
+		List<String[]> expected = new ArrayList<String[]>();
+		expected.add(line1Arr);
+		expected.add(line2Arr);
 
-		Assert.assertTrue(line1.getFirst());
-		Assert.assertArrayEquals(line1.getSecond().toArray(), line1Arr);
-
-		Tuple<Boolean, List<String>> line2 = listReader.tryRead();
-
-		Assert.assertTrue(line2.getFirst());
-		Assert.assertArrayEquals(line2.getSecond().toArray(), line2Arr);
-
-		Tuple<Boolean, List<String>> line3 = listReader.tryRead();
-
-		Assert.assertFalse(line3.getFirst());
-		Assert.assertNull(line3.getSecond());
-
+		int read = 0;
+		int lines = 0;
+		while (listReader.next())
+		{
+			lines++;
+			List<String> values = new ArrayList<String>();
+			values.add("foo");
+			if (listReader.tryRead(values))
+			{
+				if (read < expected.size()) {
+					Assert.assertArrayEquals(values.toArray(), expected.get(read));
+				}
+				else {
+					Assert.assertFalse(true);
+				}
+				read++;
+			}
+			else {
+				Assert.assertEquals(values.size(), 0);
+			}
+		}
+		Assert.assertEquals(read, 2);
+		Assert.assertEquals(lines, 2);
 	}
 
 	@Test
-	public void testTryReadWithProcessor() throws IOException {
-		String csv = "Connor,John,16\r\nSarah,Connor,abc\r\n";
+	public void testTryReadWithProcessor() {
+		String csv = "Connor,John,16\r\nSarah,Connor,18\r\nJohn,Test,ABC\r\n";
 		CellProcessor[] processors = { new NotNull(), new NotNull(), new ParseInt()  };
 		CsvListReader listReader = new CsvListReader(new StringReader(csv), STANDARD_PREFERENCE);
 
-		// Expected elements:
 		Object[] line1Arr = new Object[] { "Connor","John", 16 };
+		Object[] line2Arr = new Object[] { "Sarah","Connor", 18 };
 
-		Tuple<Boolean, List<Object>> line1 = listReader.tryRead(processors);
+		List<Object[]> expected = new ArrayList<Object[]>();
+		expected.add(line1Arr);
+		expected.add(line2Arr);
 
-		Assert.assertTrue(line1.getFirst());
-		Assert.assertArrayEquals(line1.getSecond().toArray(), line1Arr);
+		int read = 0;
+		int lines = 0;
+		while (listReader.next())
+		{
+			lines++;
+			List<Object> values = new ArrayList<Object>();
+			values.add("foo");
+			if (listReader.tryRead(values, processors))
+			{
+				if (read < expected.size()) {
+					Assert.assertArrayEquals(values.toArray(), expected.get(read));
+				}
+				else {
+					Assert.assertFalse(true);
+				}
+				read++;
+			}
+			else {
+				Assert.assertEquals(values.size(), 0);
+			}
+		}
+		Assert.assertEquals(read, 2);
+		Assert.assertEquals(lines, 3);
+	}
 
-		Tuple<Boolean, List<Object>> line2 = listReader.tryRead(processors);
+	@Test
+	public void testNext()
+	{
+		String csv = "Connor,John,16\r\nSarah,Connor,18\r\nJohn,Test,ABC\r\n";
+		CsvListReader listReader = new CsvListReader(new StringReader(csv), STANDARD_PREFERENCE);
 
-		Assert.assertFalse(line2.getFirst());
-		Assert.assertNull(line2.getSecond());
-
-		Tuple<Boolean, List<Object>> line3 = listReader.tryRead(processors);
-
-		Assert.assertFalse(line3.getFirst());
-		Assert.assertNull(line3.getSecond());
-
+		Assert.assertTrue(listReader.next());
+		Assert.assertTrue(listReader.next());
+		Assert.assertTrue(listReader.next());
+		Assert.assertFalse(listReader.next());
 	}
 
 	@Test

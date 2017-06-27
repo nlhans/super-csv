@@ -31,46 +31,40 @@ import org.supercsv.util.Tuple;
  * @author James Bassett
  */
 public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
-	
+
 	/**
 	 * Constructs a new <tt>CsvListReader</tt> with the supplied Reader and CSV preferences. Note that the
 	 * <tt>reader</tt> will be wrapped in a <tt>BufferedReader</tt> before accessed.
-	 * 
-	 * @param reader
-	 *            the reader
-	 * @param preferences
-	 *            the CSV preferences
-	 * @throws NullPointerException
-	 *             if reader or preferences are null
+	 *
+	 * @param reader      the reader
+	 * @param preferences the CSV preferences
+	 * @throws NullPointerException if reader or preferences are null
 	 */
 	public CsvListReader(final Reader reader, final CsvPreference preferences) {
 		super(reader, preferences);
 	}
-	
+
 	/**
 	 * Constructs a new <tt>CsvListReader</tt> with the supplied (custom) Tokenizer and CSV preferences. The tokenizer
 	 * should be set up with the Reader (CSV input) and CsvPreference beforehand.
-	 * 
-	 * @param tokenizer
-	 *            the tokenizer
-	 * @param preferences
-	 *            the CSV preferences
-	 * @throws NullPointerException
-	 *             if tokenizer or preferences are null
+	 *
+	 * @param tokenizer   the tokenizer
+	 * @param preferences the CSV preferences
+	 * @throws NullPointerException if tokenizer or preferences are null
 	 */
 	public CsvListReader(final ITokenizer tokenizer, final CsvPreference preferences) {
 		super(tokenizer, preferences);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public List<String> read() throws IOException {
-		
-		if( readRow() ) {
+
+		if (readRow()) {
 			return new ArrayList<String>(getColumns());
 		}
-		
+
 		return null; // EOF
 	}
 
@@ -85,20 +79,20 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 		}
 		return allLines;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public List<Object> read(final CellProcessor... processors) throws IOException {
-		
-		if( processors == null ) {
+
+		if (processors == null) {
 			throw new NullPointerException("processors should not be null");
 		}
-		
-		if( readRow() ) {
+
+		if (readRow()) {
 			return executeProcessors(processors);
 		}
-		
+
 		return null; // EOF
 	}
 
@@ -106,7 +100,7 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 	 * {@inheritDoc}
 	 */
 	public List<List<Object>> readAll(final CellProcessor... processors) throws IOException {
-		if( processors == null ) {
+		if (processors == null) {
 			throw new NullPointerException("processors should not be null");
 		}
 		List<List<Object>> allLines = new ArrayList<List<Object>>();
@@ -120,32 +114,48 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Tuple<Boolean, List<String>> tryRead()
-	{
+	public Boolean next() {
 		try {
-			List<String> data = read();
-			return new Tuple(data != null, data);
-		}
-		catch (Exception ex)
-		{
-			// ignore all exceptions; just tell user that the read was not succesful
-			return new Tuple(false, null);
+			return readRow();
+		} catch (Exception ex) {
+			return false;
 		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Tuple<Boolean, List<Object>> tryRead(final CellProcessor... processors)
-	{
-		try {
-			List<Object> data = read(processors);
-			return new Tuple(data != null, data);
+	public Boolean tryRead(List<String> values) {
+		if (values == null) {
+			return false;
 		}
-		catch (Exception ex)
-		{
+		values.clear();
+		try {
+			values.addAll(new ArrayList<String>(getColumns()));
+			return true;
+		} catch (Exception ex) {
 			// ignore all exceptions; just tell user that the read was not succesful
-			return new Tuple(false, null);
+			return false;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Boolean tryRead(List<Object> values, final CellProcessor... processors) {
+		if (values == null) {
+			return false;
+		}
+		if (processors == null) {
+			return false;
+		}
+		values.clear();
+		try {
+			values.addAll(executeProcessors(processors));
+			return true;
+		} catch (Exception ex) {
+			// ignore all exceptions; just tell user that the read was not succesful
+			return false;
 		}
 	}
 
