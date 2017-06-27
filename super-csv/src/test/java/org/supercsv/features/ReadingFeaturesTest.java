@@ -250,18 +250,18 @@ public class ReadingFeaturesTest {
 
 		Tuple<Boolean, List<String>> line1 = listReader.tryRead();
 
-		Assert.assertTrue(line1.GetFirst());
-		Assert.assertArrayEquals(line1.GetSecond().toArray(), line1Arr);
+		Assert.assertTrue(line1.getFirst());
+		Assert.assertArrayEquals(line1.getSecond().toArray(), line1Arr);
 
 		Tuple<Boolean, List<String>> line2 = listReader.tryRead();
 
-		Assert.assertTrue(line2.GetFirst());
-		Assert.assertArrayEquals(line2.GetSecond().toArray(), line2Arr);
+		Assert.assertTrue(line2.getFirst());
+		Assert.assertArrayEquals(line2.getSecond().toArray(), line2Arr);
 
 		Tuple<Boolean, List<String>> line3 = listReader.tryRead();
 
-		Assert.assertFalse(line3.GetFirst());
-		Assert.assertNull(line3.GetSecond());
+		Assert.assertFalse(line3.getFirst());
+		Assert.assertNull(line3.getSecond());
 
 	}
 
@@ -276,18 +276,18 @@ public class ReadingFeaturesTest {
 
 		Tuple<Boolean, List<Object>> line1 = listReader.tryRead(processors);
 
-		Assert.assertTrue(line1.GetFirst());
-		Assert.assertArrayEquals(line1.GetSecond().toArray(), line1Arr);
+		Assert.assertTrue(line1.getFirst());
+		Assert.assertArrayEquals(line1.getSecond().toArray(), line1Arr);
 
 		Tuple<Boolean, List<Object>> line2 = listReader.tryRead(processors);
 
-		Assert.assertFalse(line2.GetFirst());
-		Assert.assertNull(line2.GetSecond());
+		Assert.assertFalse(line2.getFirst());
+		Assert.assertNull(line2.getSecond());
 
 		Tuple<Boolean, List<Object>> line3 = listReader.tryRead(processors);
 
-		Assert.assertFalse(line3.GetFirst());
-		Assert.assertNull(line3.GetSecond());
+		Assert.assertFalse(line3.getFirst());
+		Assert.assertNull(line3.getSecond());
 
 	}
 

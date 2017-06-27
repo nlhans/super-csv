@@ -12,6 +12,6 @@ public class Tuple<A, B> {
         second=b;
     }
 
-    public A GetFirst() { return first; }
-    public B GetSecond() { return second; }
+    public A getFirst() { return first; }
+    public B getSecond() { return second; }
 }
