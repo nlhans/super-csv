@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.prefs.CsvPreference;
-import org.supercsv.util.Tuple;
 
 /**
  * CsvListReader is a simple reader that reads a row from a CSV file into a <tt>List</tt> of Strings.
