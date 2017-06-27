@@ -30,7 +30,7 @@ import org.supercsv.io.CsvListReader;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
 import org.supercsv.prefs.CsvPreference.Builder;
-import org.supercsv.util.Tuple;
+import org.supercsv.util.TryReadAllContext;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -41,6 +41,7 @@ import java.math.MathContext;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -314,6 +315,28 @@ public class ReadingFeaturesTest {
 		}
 		Assert.assertEquals(read, 2);
 		Assert.assertEquals(lines, 3);
+	}
+
+	@Ignore
+	@Test
+	public void testTryReadAll() {
+		String csv = "Connor,John,16\r\nSarah,Connor,18\r\nJohn,Test,ABC\r\n";
+		CsvListReader listReader = new CsvListReader(new StringReader(csv), STANDARD_PREFERENCE);
+
+		List<List<String>> expected = Arrays.asList(
+				Arrays.asList("Connor", "John", "16"),
+				Arrays.asList("Sarah", "Connor", "18"),
+				Arrays.asList("John", "Test", "ABC")
+		);
+
+		TryReadAllContext context = listReader.tryReadAll();
+
+		List<List<String>> parsed = context.getValues();
+
+		Assert.assertTrue(context.isSuccess());
+		Assert.assertEquals(expected, parsed);
+		Assert.assertTrue(context.getFailed().isEmpty());
+
 	}
 
 	@Test

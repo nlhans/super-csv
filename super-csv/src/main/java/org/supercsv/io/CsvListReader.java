@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.prefs.CsvPreference;
-import org.supercsv.util.Tuple;
+import org.supercsv.util.TryReadAllContext;
 
 /**
  * CsvListReader is a simple reader that reads a row from a CSV file into a <tt>List</tt> of Strings.
@@ -139,6 +139,7 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 		}
 	}
 
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -164,5 +165,9 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 	 */
 	public List<Object> executeProcessors(final CellProcessor... processors) {
 		return super.executeProcessors(new ArrayList<Object>(getColumns().size()), processors);
+	}
+
+	public TryReadAllContext tryReadAll() {
+		return new TryReadAllContext();
 	}
 }
