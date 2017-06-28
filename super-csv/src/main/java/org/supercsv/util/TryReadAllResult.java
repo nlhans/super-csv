@@ -3,10 +3,9 @@ package org.supercsv.util;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TryReadAllContext<T> {
+public class TryReadAllResult<T> {
     private List<List<T>> values = new ArrayList<List<T>>();
     private List<String> failed = new ArrayList<String>();
-    private boolean success = true;
 
     public List<List<T>> getValues() {
         return values;
@@ -17,7 +16,7 @@ public class TryReadAllContext<T> {
     }
 
     public boolean isSuccess() {
-        return success;
+        return failed.isEmpty();
     }
 
     public void addValues(List<T> values) {
@@ -25,7 +24,6 @@ public class TryReadAllContext<T> {
     }
 
     public void addFailed(String untokenizedRow) {
-        success = false;
         failed.add(untokenizedRow);
     }
 }

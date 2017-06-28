@@ -18,7 +18,7 @@ package org.supercsv.io;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.exception.SuperCsvException;
 import org.supercsv.prefs.CsvPreference;
-import org.supercsv.util.TryReadAllContext;
+import org.supercsv.util.TryReadAllResult;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -168,8 +168,8 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 		return super.executeProcessors(new ArrayList<Object>(getColumns().size()), processors);
 	}
 
-	public TryReadAllContext<String> tryReadAll() throws IOException {
-		TryReadAllContext<String> tryReadAllContext = new TryReadAllContext<String>();
+	public TryReadAllResult<String> tryReadAll() throws IOException {
+		TryReadAllResult<String> tryReadAllResult = new TryReadAllResult<String>();
 
 		List<String> columns = new ArrayList<String>();
 
@@ -177,17 +177,17 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 			boolean successfullyParsed = tryRead(columns);
 
 			if (successfullyParsed) {
-				tryReadAllContext.addValues(new ArrayList<String>(columns));
+				tryReadAllResult.addValues(new ArrayList<String>(columns));
 			} else {
-				tryReadAllContext.addFailed(getUntokenizedRow());
+				tryReadAllResult.addFailed(getUntokenizedRow());
 			}
 		}
 
-		return tryReadAllContext;
+		return tryReadAllResult;
 	}
 
-	public TryReadAllContext<Object> tryReadAll(final CellProcessor... processors) throws IOException {
-		TryReadAllContext<Object> tryReadAllContext = new TryReadAllContext<Object>();
+	public TryReadAllResult<Object> tryReadAll(final CellProcessor... processors) throws IOException {
+		TryReadAllResult<Object> tryReadAllResult = new TryReadAllResult<Object>();
 
 		List<Object> columns = new ArrayList<Object>();
 
@@ -195,13 +195,13 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 			boolean successfullyParsed = tryRead(columns, processors);
 
 			if (successfullyParsed) {
-				tryReadAllContext.addValues(new ArrayList<Object>(columns));
+				tryReadAllResult.addValues(new ArrayList<Object>(columns));
 			} else {
-				tryReadAllContext.addFailed(getUntokenizedRow());
+				tryReadAllResult.addFailed(getUntokenizedRow());
 			}
 		}
 
-		return tryReadAllContext;
+		return tryReadAllResult;
 
 	}
 }

@@ -30,7 +30,7 @@ import org.supercsv.io.CsvListReader;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
 import org.supercsv.prefs.CsvPreference.Builder;
-import org.supercsv.util.TryReadAllContext;
+import org.supercsv.util.TryReadAllResult;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -328,7 +328,7 @@ public class ReadingFeaturesTest {
 				Arrays.asList("John", "Test", "ABC")
 		);
 
-		TryReadAllContext<String> context = listReader.tryReadAll();
+		TryReadAllResult<String> context = listReader.tryReadAll();
 
 		List<List<String>> parsed = context.getValues();
 
@@ -341,11 +341,11 @@ public class ReadingFeaturesTest {
     public void testTryReadAllEmpty() throws IOException {
 	    CsvListReader listReader = new CsvListReader(new StringReader(""), STANDARD_PREFERENCE);
 
-	    TryReadAllContext tryReadAllContext = listReader.tryReadAll();
+	    TryReadAllResult tryReadAllResult = listReader.tryReadAll();
 
-	    Assert.assertTrue(tryReadAllContext.isSuccess());
-	    Assert.assertTrue(tryReadAllContext.getValues().isEmpty());
-	    Assert.assertTrue(tryReadAllContext.getFailed().isEmpty());
+	    Assert.assertTrue(tryReadAllResult.isSuccess());
+	    Assert.assertTrue(tryReadAllResult.getValues().isEmpty());
+	    Assert.assertTrue(tryReadAllResult.getFailed().isEmpty());
     }
 
     @Test
@@ -359,7 +359,7 @@ public class ReadingFeaturesTest {
                 Arrays.asList(new Object[] {"Sarah", "Connor", 18})
         );
 
-        TryReadAllContext<Object> context = listReader.tryReadAll(new NotNull(), new NotNull(), new ParseInt());
+        TryReadAllResult<Object> context = listReader.tryReadAll(new NotNull(), new NotNull(), new ParseInt());
 
         List<List<Object>> parsed = context.getValues();
         List<String> failed = context.getFailed();
@@ -381,7 +381,7 @@ public class ReadingFeaturesTest {
                 Arrays.asList(new Object[] {"John", "Test", 20})
         );
 
-        TryReadAllContext<Object> context = listReader.tryReadAll(new NotNull(), new NotNull(), new ParseInt());
+        TryReadAllResult<Object> context = listReader.tryReadAll(new NotNull(), new NotNull(), new ParseInt());
 
         List<List<Object>> parsed = context.getValues();
         List<String> failed = context.getFailed();
