@@ -330,7 +330,7 @@ public class ReadingFeaturesTest {
 
 		TryReadAllContext context = listReader.tryReadAll();
 
-		List<List<Object>> parsed = context.getValues();
+		List<List<?>> parsed = context.getValues();
 
 		Assert.assertTrue(context.isSuccess());
 		Assert.assertEquals(expected, parsed);
@@ -361,7 +361,7 @@ public class ReadingFeaturesTest {
 
         TryReadAllContext context = listReader.tryReadAll(new NotNull(), new NotNull(), new ParseInt());
 
-        List<List<Object>> parsed = context.getValues();
+        List<List<?>> parsed = context.getValues();
         List<String> failed = context.getFailed();
 
         Assert.assertFalse(context.isSuccess());
@@ -383,7 +383,7 @@ public class ReadingFeaturesTest {
 
         TryReadAllContext context = listReader.tryReadAll(new NotNull(), new NotNull(), new ParseInt());
 
-        List<List<Object>> parsed = context.getValues();
+        List<List<?>> parsed = context.getValues();
         List<String> failed = context.getFailed();
 
         Assert.assertFalse(context.isSuccess());
