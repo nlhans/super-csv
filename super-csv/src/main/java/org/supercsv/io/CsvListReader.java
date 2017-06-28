@@ -15,14 +15,15 @@
  */
 package org.supercsv.io;
 
+import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.exception.SuperCsvException;
+import org.supercsv.prefs.CsvPreference;
+import org.supercsv.util.TryReadAllContext;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.supercsv.cellprocessor.ift.CellProcessor;
-import org.supercsv.prefs.CsvPreference;
-import org.supercsv.util.TryReadAllContext;
 
 /**
  * CsvListReader is a simple reader that reads a row from a CSV file into a <tt>List</tt> of Strings.
@@ -167,7 +168,32 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 		return super.executeProcessors(new ArrayList<Object>(getColumns().size()), processors);
 	}
 
-	public TryReadAllContext tryReadAll() {
-		return new TryReadAllContext();
+	public TryReadAllContext tryReadAll() throws IOException {
+		return tryReadAll(null);
+	}
+
+	public TryReadAllContext tryReadAll(final CellProcessor... processors) throws IOException {
+		TryReadAllContext tryReadAllContext = new TryReadAllContext();
+
+		List<?> columns = new ArrayList<Object>();
+
+		while (columns != null) {
+			try {
+				if (processors == null) {
+					columns = read();
+				} else {
+					columns = read(processors);
+				}
+
+				if (columns != null) {
+					tryReadAllContext.addValues(columns);
+				}
+
+			} catch (SuperCsvException e) {
+				tryReadAllContext.addFailed(getUntokenizedRow());
+			}
+		}
+
+		return tryReadAllContext;
 	}
 }

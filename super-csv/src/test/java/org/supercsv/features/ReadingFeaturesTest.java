@@ -317,9 +317,8 @@ public class ReadingFeaturesTest {
 		Assert.assertEquals(lines, 3);
 	}
 
-	@Ignore
 	@Test
-	public void testTryReadAll() {
+	public void testTryReadAll() throws IOException {
 		String csv = "Connor,John,16\r\nSarah,Connor,18\r\nJohn,Test,ABC\r\n";
 		CsvListReader listReader = new CsvListReader(new StringReader(csv), STANDARD_PREFERENCE);
 
@@ -331,13 +330,68 @@ public class ReadingFeaturesTest {
 
 		TryReadAllContext context = listReader.tryReadAll();
 
-		List<List<String>> parsed = context.getValues();
+		List<List<Object>> parsed = context.getValues();
 
 		Assert.assertTrue(context.isSuccess());
 		Assert.assertEquals(expected, parsed);
 		Assert.assertTrue(context.getFailed().isEmpty());
-
 	}
+
+	@Test
+    public void testTryReadAllEmpty() throws IOException {
+	    CsvListReader listReader = new CsvListReader(new StringReader(""), STANDARD_PREFERENCE);
+
+	    TryReadAllContext tryReadAllContext = listReader.tryReadAll();
+
+	    Assert.assertTrue(tryReadAllContext.isSuccess());
+	    Assert.assertTrue(tryReadAllContext.getValues().isEmpty());
+	    Assert.assertTrue(tryReadAllContext.getFailed().isEmpty());
+    }
+
+    @Test
+    public void testTryReadAllFail() throws IOException {
+		// trying to execute ParseInt on "ABC"
+        String csv = "Connor,John,16\r\nSarah,Connor,18\r\nJohn,Test,ABC\r\n";
+        CsvListReader listReader = new CsvListReader(new StringReader(csv), STANDARD_PREFERENCE);
+
+        List<List<Object>> expected = Arrays.asList(
+                Arrays.asList(new Object[] {"Connor", "John", 16}),
+                Arrays.asList(new Object[] {"Sarah", "Connor", 18})
+        );
+
+        TryReadAllContext context = listReader.tryReadAll(new NotNull(), new NotNull(), new ParseInt());
+
+        List<List<Object>> parsed = context.getValues();
+        List<String> failed = context.getFailed();
+
+        Assert.assertFalse(context.isSuccess());
+        Assert.assertEquals(expected, parsed);
+        Assert.assertEquals(1, failed.size());
+        Assert.assertEquals("John,Test,ABC", failed.get(0));
+    }
+
+    @Test
+    public void testTryReadAllFail2() throws IOException {
+		// trying to execute NotNull on null value
+        String csv = "Connor,John,16\r\nSarah,,18\r\nJohn,Test,20\r\n";
+        CsvListReader listReader = new CsvListReader(new StringReader(csv), STANDARD_PREFERENCE);
+
+        List<List<Object>> expected = Arrays.asList(
+                Arrays.asList(new Object[] {"Connor", "John", 16}),
+                Arrays.asList(new Object[] {"John", "Test", 20})
+        );
+
+        TryReadAllContext context = listReader.tryReadAll(new NotNull(), new NotNull(), new ParseInt());
+
+        List<List<Object>> parsed = context.getValues();
+        List<String> failed = context.getFailed();
+
+        Assert.assertFalse(context.isSuccess());
+        Assert.assertEquals(expected, parsed);
+        Assert.assertEquals(1, failed.size());
+        Assert.assertEquals("Sarah,,18", failed.get(0));
+    }
+
 
 	@Test
 	public void testNext()
