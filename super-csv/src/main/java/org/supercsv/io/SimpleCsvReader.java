@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface SimpleCsvReader {
 
-    public boolean next() throws IOException;
+    boolean next() throws IOException;
 
-    public boolean tryRead(List<String> values);
+    boolean tryRead(List<String> values);
 
-    public boolean tryRead(List<Object> values, final CellProcessor... processors);
+    boolean tryRead(List<Object> values, final CellProcessor... processors);
 
-    public TryReadAllResult<String> tryReadAll() throws IOException;
+    TryReadAllResult<String> tryReadAll() throws IOException;
 
-    public TryReadAllResult<Object> tryReadAll(final CellProcessor... processors) throws IOException;
+    TryReadAllResult<Object> tryReadAll(final CellProcessor... processors) throws IOException;
 }
