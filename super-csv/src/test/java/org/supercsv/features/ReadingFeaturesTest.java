@@ -242,7 +242,7 @@ public class ReadingFeaturesTest {
 	}
 
 	@Test
-	public void testTryRead() {
+	public void testTryRead() throws IOException {
 		String csv = "Connor,John,16\r\nSarah,Connor,18\r\n\r\n";
 		CsvListReader listReader = new CsvListReader(new StringReader(csv), STANDARD_PREFERENCE);
 
@@ -280,7 +280,7 @@ public class ReadingFeaturesTest {
 	}
 
 	@Test
-	public void testTryReadWithProcessor() {
+	public void testTryReadWithProcessor() throws IOException {
 		String csv = "Connor,John,16\r\nSarah,Connor,18\r\nJohn,Test,ABC\r\n";
 		CellProcessor[] processors = { new NotNull(), new NotNull(), new ParseInt()  };
 		CsvListReader listReader = new CsvListReader(new StringReader(csv), STANDARD_PREFERENCE);
@@ -338,7 +338,7 @@ public class ReadingFeaturesTest {
 	}
 
 	@Test
-    public void testTryReadAllEmpty() {
+    public void testTryReadAllEmpty() throws IOException {
 	    CsvListReader listReader = new CsvListReader(new StringReader(""), STANDARD_PREFERENCE);
 
 	    TryReadAllContext tryReadAllContext = listReader.tryReadAll();
@@ -394,7 +394,7 @@ public class ReadingFeaturesTest {
 
 
 	@Test
-	public void testNext() {
+	public void testNext() throws IOException {
 		String csv = "Connor,John,16\r\nSarah,Connor,18\r\nJohn,Test,ABC\r\n";
 		CsvListReader listReader = new CsvListReader(new StringReader(csv), STANDARD_PREFERENCE);
 

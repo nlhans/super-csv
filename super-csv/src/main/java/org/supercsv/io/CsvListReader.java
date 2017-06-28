@@ -115,10 +115,10 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Boolean next() {
+	public boolean next() throws IOException {
 		try {
 			return readRow();
-		} catch (Exception ex) {
+		} catch (SuperCsvException ex) {
 			return false;
 		}
 	}
@@ -126,7 +126,7 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Boolean tryRead(List<String> values) {
+	public boolean tryRead(List<String> values) {
 		if (values == null) {
 			return false;
 		}
@@ -134,7 +134,7 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 		try {
 			values.addAll(new ArrayList<String>(getColumns()));
 			return true;
-		} catch (Exception ex) {
+		} catch (SuperCsvException ex) {
 			// ignore all exceptions; just tell user that the read was not succesful
 			return false;
 		}
@@ -144,7 +144,7 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Boolean tryRead(List<Object> values, final CellProcessor... processors) {
+	public boolean tryRead(List<Object> values, final CellProcessor... processors) {
 		if (values == null) {
 			return false;
 		}
@@ -155,7 +155,7 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 		try {
 			values.addAll(executeProcessors(processors));
 			return true;
-		} catch (Exception ex) {
+		} catch (SuperCsvException ex) {
 			// ignore all exceptions; just tell user that the read was not succesful
 			return false;
 		}
@@ -168,7 +168,7 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 		return super.executeProcessors(new ArrayList<Object>(getColumns().size()), processors);
 	}
 
-	public TryReadAllContext<String> tryReadAll() {
+	public TryReadAllContext<String> tryReadAll() throws IOException {
 		TryReadAllContext<String> tryReadAllContext = new TryReadAllContext<String>();
 
 		List<String> columns = new ArrayList<String>();
@@ -186,7 +186,7 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 		return tryReadAllContext;
 	}
 
-	public TryReadAllContext<Object> tryReadAll(final CellProcessor... processors) {
+	public TryReadAllContext<Object> tryReadAll(final CellProcessor... processors) throws IOException {
 		TryReadAllContext<Object> tryReadAllContext = new TryReadAllContext<Object>();
 
 		List<Object> columns = new ArrayList<Object>();
