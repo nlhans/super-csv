@@ -16,9 +16,7 @@
 package org.supercsv.io;
 
 import org.supercsv.cellprocessor.ift.CellProcessor;
-import org.supercsv.exception.SuperCsvException;
 import org.supercsv.prefs.CsvPreference;
-import org.supercsv.util.TryReadAllResult;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -115,93 +113,8 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean next() throws IOException {
-		try {
-			return readRow();
-		} catch (SuperCsvException ex) {
-			return false;
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean tryRead(List<String> values) {
-		if (values == null) {
-			return false;
-		}
-		values.clear();
-		try {
-			values.addAll(new ArrayList<String>(getColumns()));
-			return true;
-		} catch (SuperCsvException ex) {
-			// ignore all exceptions; just tell user that the read was not succesful
-			return false;
-		}
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean tryRead(List<Object> values, final CellProcessor... processors) {
-		if (values == null) {
-			return false;
-		}
-		if (processors == null) {
-			return false;
-		}
-		values.clear();
-		try {
-			values.addAll(executeProcessors(processors));
-			return true;
-		} catch (SuperCsvException ex) {
-			// ignore all exceptions; just tell user that the read was not succesful
-			return false;
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public List<Object> executeProcessors(final CellProcessor... processors) {
 		return super.executeProcessors(new ArrayList<Object>(getColumns().size()), processors);
 	}
 
-	public TryReadAllResult<String> tryReadAll() throws IOException {
-		TryReadAllResult<String> tryReadAllResult = new TryReadAllResult<String>();
-
-		List<String> columns = new ArrayList<String>();
-
-		while (next()) {
-			boolean successfullyParsed = tryRead(columns);
-
-			if (successfullyParsed) {
-				tryReadAllResult.addValues(new ArrayList<String>(columns));
-			} else {
-				tryReadAllResult.addFailed(getUntokenizedRow());
-			}
-		}
-
-		return tryReadAllResult;
-	}
-
-	public TryReadAllResult<Object> tryReadAll(final CellProcessor... processors) throws IOException {
-		TryReadAllResult<Object> tryReadAllResult = new TryReadAllResult<Object>();
-
-		List<Object> columns = new ArrayList<Object>();
-
-		while (next()) {
-			boolean successfullyParsed = tryRead(columns, processors);
-
-			if (successfullyParsed) {
-				tryReadAllResult.addValues(new ArrayList<Object>(columns));
-			} else {
-				tryReadAllResult.addFailed(getUntokenizedRow());
-			}
-		}
-
-		return tryReadAllResult;
-
-	}
 }
