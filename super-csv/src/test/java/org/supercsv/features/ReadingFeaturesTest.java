@@ -328,9 +328,9 @@ public class ReadingFeaturesTest {
 				Arrays.asList("John", "Test", "ABC")
 		);
 
-		TryReadAllContext context = listReader.tryReadAll();
+		TryReadAllContext<String> context = listReader.tryReadAll();
 
-		List<List<?>> parsed = context.getValues();
+		List<List<String>> parsed = context.getValues();
 
 		Assert.assertTrue(context.isSuccess());
 		Assert.assertEquals(expected, parsed);
@@ -338,7 +338,7 @@ public class ReadingFeaturesTest {
 	}
 
 	@Test
-    public void testTryReadAllEmpty() throws IOException {
+    public void testTryReadAllEmpty() {
 	    CsvListReader listReader = new CsvListReader(new StringReader(""), STANDARD_PREFERENCE);
 
 	    TryReadAllContext tryReadAllContext = listReader.tryReadAll();
@@ -394,8 +394,7 @@ public class ReadingFeaturesTest {
 
 
 	@Test
-	public void testNext()
-	{
+	public void testNext() {
 		String csv = "Connor,John,16\r\nSarah,Connor,18\r\nJohn,Test,ABC\r\n";
 		CsvListReader listReader = new CsvListReader(new StringReader(csv), STANDARD_PREFERENCE);
 

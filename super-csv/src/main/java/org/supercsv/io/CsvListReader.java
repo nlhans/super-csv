@@ -168,32 +168,40 @@ public class CsvListReader extends AbstractCsvReader implements ICsvListReader {
 		return super.executeProcessors(new ArrayList<Object>(getColumns().size()), processors);
 	}
 
-	public TryReadAllContext tryReadAll() throws IOException {
-		return tryReadAll(null);
-	}
+	public TryReadAllContext<String> tryReadAll() {
+		TryReadAllContext<String> tryReadAllContext = new TryReadAllContext<String>();
 
-	public TryReadAllContext tryReadAll(final CellProcessor... processors) throws IOException {
-		TryReadAllContext tryReadAllContext = new TryReadAllContext();
+		List<String> columns = new ArrayList<String>();
 
-		List<?> columns = new ArrayList<Object>();
+		while (next()) {
+			boolean successfullyParsed = tryRead(columns);
 
-		while (columns != null) {
-			try {
-				if (processors == null) {
-					columns = read();
-				} else {
-					columns = read(processors);
-				}
-
-				if (columns != null) {
-					tryReadAllContext.addValues(columns);
-				}
-
-			} catch (SuperCsvException e) {
+			if (successfullyParsed) {
+				tryReadAllContext.addValues(new ArrayList<String>(columns));
+			} else {
 				tryReadAllContext.addFailed(getUntokenizedRow());
 			}
 		}
 
 		return tryReadAllContext;
+	}
+
+	public TryReadAllContext<Object> tryReadAll(final CellProcessor... processors) {
+		TryReadAllContext<Object> tryReadAllContext = new TryReadAllContext<Object>();
+
+		List<Object> columns = new ArrayList<Object>();
+
+		while (next()) {
+			boolean successfullyParsed = tryRead(columns, processors);
+
+			if (successfullyParsed) {
+				tryReadAllContext.addValues(new ArrayList<Object>(columns));
+			} else {
+				tryReadAllContext.addFailed(getUntokenizedRow());
+			}
+		}
+
+		return tryReadAllContext;
+
 	}
 }

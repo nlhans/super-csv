@@ -3,12 +3,12 @@ package org.supercsv.util;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TryReadAllContext {
-    private List<List<? extends Object>> values = new ArrayList<List<? extends Object>>();
+public class TryReadAllContext<T> {
+    private List<List<T>> values = new ArrayList<List<T>>();
     private List<String> failed = new ArrayList<String>();
     private boolean success = true;
 
-    public List<List<?>> getValues() {
+    public List<List<T>> getValues() {
         return values;
     }
 
@@ -20,7 +20,7 @@ public class TryReadAllContext {
         return success;
     }
 
-    public void addValues(List<?> values) {
+    public void addValues(List<T> values) {
         this.values.add(values);
     }
 
